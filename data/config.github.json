@@ -6,11 +6,11 @@
     "base_url": "https://api.deepseek.com",
     "api_key_env": "DEEPSEEK_API_KEY",
     "temperature": 0.3,
-    "max_tokens": 4096,
-    "throttle_sec": 1.5,
-    "languages": ["zh"],
-    "analysis_concurrency": 1,
-    "enrichment_concurrency": 1
+    "max_tokens": 8192,
+    "throttle_sec": 1,
+    "languages": ["zh", "en"],
+    "analysis_concurrency": 2,
+    "enrichment_concurrency": 2
   },
   "sources": {
     "github": [
@@ -52,8 +52,8 @@
     ],
     "hackernews": {
       "enabled": true,
-      "fetch_top_stories": 20,
-      "min_score": 200
+      "fetch_top_stories": 40,
+      "min_score": 120
     },
     "rss": [
       {
@@ -89,28 +89,28 @@
       {
         "name": "CNBC Finance",
         "url": "https://www.cnbc.com/id/10000664/device/rss/rss.html",
-        "enabled": false,
+        "enabled": true,
         "category": "finance"
       },
       {
         "name": "CNBC Markets",
         "url": "https://www.cnbc.com/id/15839069/device/rss/rss.html",
-        "enabled": false,
+        "enabled": true,
         "category": "markets"
       },
       {
         "name": "Yahoo Finance Top Stories",
         "url": "https://finance.yahoo.com/news/rssindex",
-        "enabled": false,
+        "enabled": true,
         "category": "finance"
       }
     ],
     "reddit": {
-      "enabled": false,
+      "enabled": true,
       "subreddits": [
         {
           "subreddit": "MachineLearning",
-          "enabled": false,
+          "enabled": true,
           "sort": "hot",
           "time_filter": "day",
           "fetch_limit": 12,
@@ -118,7 +118,7 @@
         },
         {
           "subreddit": "LocalLLaMA",
-          "enabled": false,
+          "enabled": true,
           "sort": "hot",
           "time_filter": "day",
           "fetch_limit": 12,
@@ -126,7 +126,7 @@
         },
         {
           "subreddit": "singularity",
-          "enabled": false,
+          "enabled": true,
           "sort": "hot",
           "time_filter": "day",
           "fetch_limit": 8,
@@ -142,7 +142,7 @@
         {
           "channel": "zaihuapd",
           "enabled": true,
-          "fetch_limit": 8
+          "fetch_limit": 20
         }
       ]
     },
@@ -164,17 +164,17 @@
           "name": "ai_megacaps",
           "enabled": true,
           "provider": "yfinance",
-          "fetch_limit": 8,
+          "fetch_limit": 20,
           "category": "equities",
-          "symbols": ["NVDA", "MSFT", "GOOGL", "META", "AMD", "AVGO"]
+          "symbols": ["NVDA", "MSFT", "GOOGL", "META", "AMZN", "TSLA", "AAPL", "AMD", "AVGO", "TSM", "ASML", "ARM"]
         },
         {
           "name": "china_adr_and_etf",
           "enabled": true,
           "provider": "yfinance",
-          "fetch_limit": 8,
+          "fetch_limit": 20,
           "category": "china-markets",
-          "symbols": ["BABA", "PDD", "KWEB", "MCHI", "ASHR"]
+          "symbols": ["BABA", "TCEHY", "PDD", "BIDU", "KWEB", "MCHI", "ASHR"]
         }
       ]
     },
@@ -183,14 +183,14 @@
       "period": "past_24_hours",
       "languages": ["All", "Python", "TypeScript", "Rust", "Jupyter Notebook"],
       "keywords": ["ai", "llm", "agent", "rag", "inference", "model", "cuda", "transformer", "deep-learning"],
-      "min_stars": 50,
-      "max_items": 12
+      "min_stars": 15,
+      "max_items": 30
     },
     "gdelt": {
-      "enabled": false,
+      "enabled": true,
       "query": "(artificial intelligence OR OpenAI OR NVIDIA OR semiconductor OR Federal Reserve OR earnings OR funds OR A-shares OR Hong Kong stocks)",
       "mode": "ArtList",
-      "max_records": 20,
+      "max_records": 80,
       "timespan": "24h",
       "language": null,
       "country": null,
@@ -202,29 +202,28 @@
       "language": "zh-CN",
       "country": "CN",
       "ceid": "CN:zh-Hans",
-      "max_results": 30,
+      "max_results": 80,
       "category": "china-markets"
     }
   },
   "filtering": {
     "ai_score_threshold": 7.0,
     "time_window_hours": 24,
-    "analysis_max_items": 8,
-    "max_items": 8,
+    "max_items": 24,
     "category_groups": {
       "ai": {
         "name": "AI / ML / Developer Tools",
-        "limit": 4,
+        "limit": 11,
         "categories": ["ai-news", "ai-tools", "ai-open-source", "github-trending"]
       },
       "finance": {
         "name": "Finance / Markets / Earnings",
-        "limit": 3,
+        "limit": 9,
         "categories": ["finance", "markets", "equities", "china-markets", "macro-markets", "semiconductors"]
       }
     },
     "default_group": "other",
-    "default_group_limit": 1
+    "default_group_limit": 4
   },
   "webhook": {
     "enabled": true,
