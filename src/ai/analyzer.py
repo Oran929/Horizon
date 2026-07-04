@@ -4,7 +4,8 @@ import asyncio
 import json
 import re
 from typing import List, Optional
-from tenacity import retry, stop_after_attempt, wait_exponential
+from openai import APIStatusError
+from tenacity import RetryError, retry, stop_after_attempt, wait_exponential
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, MofNCompleteColumn
 
 from .client import AIClient
@@ -41,6 +42,27 @@ class ContentAnalyzer:
         concurrency = getattr(config, "analysis_concurrency", 1)
         return max(concurrency, 1)
 
+    @staticmethod
+    def _format_analysis_error(error: Exception) -> str:
+        cause = error
+        if isinstance(error, RetryError) and error.last_attempt.failed:
+            cause = error.last_attempt.exception()
+
+        if isinstance(cause, APIStatusError):
+            body = ""
+            response = getattr(cause, "response", None)
+            if response is not None:
+                try:
+                    body = response.text[:500]
+                except Exception:
+                    body = ""
+            return (
+                f"{type(cause).__name__} status={cause.status_code} "
+                f"message={cause.message} body={body}"
+            )
+
+        return f"{type(cause).__name__}: {cause}"
+
     async def analyze_batch(self, items: List[ContentItem]) -> List[ContentItem]:
         throttle_sec = self._get_throttle_sec()
         concurrency = self._get_concurrency()
@@ -51,7 +73,10 @@ class ContentAnalyzer:
                 try:
                     await self._analyze_item(item)
                 except Exception as e:
-                    print(f"Error analyzing item {item.id}: {e}")
+                    print(
+                        f"Error analyzing item {item.id}: "
+                        f"{self._format_analysis_error(e)}"
+                    )
                     item.ai_score = 0.0
                     item.ai_reason = "Analysis failed"
                     item.ai_summary = item.title
