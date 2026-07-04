@@ -1,19 +1,15 @@
 {
   "version": "1.0",
   "ai": {
-    "provider": "deepseek",
-    "model": "deepseek-v4-flash",
-    "base_url": "https://api.deepseek.com",
-    "api_key_env": "DEEPSEEK_API_KEY",
+    "provider": "ali",
+    "model": "qwen-plus",
+    "api_key_env": "DASHSCOPE_API_KEY",
     "temperature": 0.3,
     "max_tokens": 8192,
     "throttle_sec": 1,
-    "languages": [
-      "zh",
-      "en"
-    ],
-    "analysis_concurrency": 5,
-    "enrichment_concurrency": 5
+    "languages": ["zh", "en"],
+    "analysis_concurrency": 2,
+    "enrichment_concurrency": 2
   },
   "sources": {
     "github": [
@@ -36,15 +32,27 @@
       },
       {
         "type": "repo_releases",
-        "owner": "triton-lang",
-        "repo": "triton",
+        "owner": "huggingface",
+        "repo": "transformers",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "ollama",
+        "repo": "ollama",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "openai",
+        "repo": "openai-python",
         "enabled": true
       }
     ],
     "hackernews": {
       "enabled": true,
-      "fetch_top_stories": 30,
-      "min_score": 150
+      "fetch_top_stories": 40,
+      "min_score": 120
     },
     "rss": [
       {
@@ -54,22 +62,46 @@
         "category": "ai-tools"
       },
       {
+        "name": "Latent Space",
+        "url": "https://www.latent.space/feed",
+        "enabled": true,
+        "category": "ai-news"
+      },
+      {
+        "name": "Hugging Face Blog",
+        "url": "https://huggingface.co/blog/feed.xml",
+        "enabled": true,
+        "category": "ai-open-source"
+      },
+      {
         "name": "GitHub Trending - Daily",
         "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml",
         "enabled": true,
         "category": "github-trending"
       },
       {
-        "name": "Semianalysis",
+        "name": "SemiAnalysis",
         "url": "https://newsletter.semianalysis.com/feed",
         "enabled": true,
         "category": "semiconductors"
       },
       {
-        "name": "LWN.net",
-        "url": "https://lwn.net/headlines/full_text?key=${LWN_KEY}",
+        "name": "CNBC Finance",
+        "url": "https://www.cnbc.com/id/10000664/device/rss/rss.html",
         "enabled": true,
-        "category": "linux-kernel"
+        "category": "finance"
+      },
+      {
+        "name": "CNBC Markets",
+        "url": "https://www.cnbc.com/id/15839069/device/rss/rss.html",
+        "enabled": true,
+        "category": "markets"
+      },
+      {
+        "name": "Yahoo Finance Top Stories",
+        "url": "https://finance.yahoo.com/news/rssindex",
+        "enabled": true,
+        "category": "finance"
       }
     ],
     "reddit": {
@@ -80,20 +112,28 @@
           "enabled": true,
           "sort": "hot",
           "time_filter": "day",
-          "fetch_limit": 10,
-          "min_score": 60
+          "fetch_limit": 12,
+          "min_score": 40
         },
         {
           "subreddit": "LocalLLaMA",
           "enabled": true,
           "sort": "hot",
           "time_filter": "day",
-          "fetch_limit": 10,
-          "min_score": 60
+          "fetch_limit": 12,
+          "min_score": 40
+        },
+        {
+          "subreddit": "singularity",
+          "enabled": true,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 8,
+          "min_score": 80
         }
       ],
       "users": [],
-      "fetch_comments": 10
+      "fetch_comments": 6
     },
     "telegram": {
       "enabled": true,
@@ -104,11 +144,85 @@
           "fetch_limit": 20
         }
       ]
+    },
+    "twitter": {
+      "enabled": false,
+      "users": ["karpathy", "sama", "ylecun", "AndrewYNg"],
+      "fetch_limit": 20,
+      "fetch_reply_text": false,
+      "max_replies_per_tweet": 3,
+      "max_tweets_to_expand": 10,
+      "reply_min_likes": 10
+    },
+    "openbb": {
+      "enabled": true,
+      "fetch_filings": false,
+      "filings_provider": "sec",
+      "watchlists": [
+        {
+          "name": "ai_megacaps",
+          "enabled": true,
+          "provider": "yfinance",
+          "fetch_limit": 20,
+          "category": "equities",
+          "symbols": ["NVDA", "MSFT", "GOOGL", "META", "AMZN", "TSLA", "AAPL", "AMD", "AVGO", "TSM", "ASML", "ARM"]
+        },
+        {
+          "name": "china_adr_and_etf",
+          "enabled": true,
+          "provider": "yfinance",
+          "fetch_limit": 20,
+          "category": "china-markets",
+          "symbols": ["BABA", "TCEHY", "PDD", "BIDU", "KWEB", "MCHI", "ASHR"]
+        }
+      ]
+    },
+    "ossinsight": {
+      "enabled": true,
+      "period": "past_24_hours",
+      "languages": ["All", "Python", "TypeScript", "Rust", "Jupyter Notebook"],
+      "keywords": ["ai", "llm", "agent", "rag", "inference", "model", "cuda", "transformer", "deep-learning"],
+      "min_stars": 15,
+      "max_items": 30
+    },
+    "gdelt": {
+      "enabled": true,
+      "query": "(artificial intelligence OR OpenAI OR NVIDIA OR semiconductor OR Federal Reserve OR earnings OR funds OR A-shares OR Hong Kong stocks)",
+      "mode": "ArtList",
+      "max_records": 80,
+      "timespan": "24h",
+      "language": null,
+      "country": null,
+      "category": "macro-markets"
+    },
+    "google_news": {
+      "enabled": true,
+      "query": "AI 行业 热点 OR 基金 动向 OR A股 市场 分析 OR 港股 市场 分析 OR 财报",
+      "language": "zh-CN",
+      "country": "CN",
+      "ceid": "CN:zh-Hans",
+      "max_results": 80,
+      "category": "china-markets"
     }
   },
   "filtering": {
-    "ai_score_threshold": 8.0,
-    "time_window_hours": 24
+    "ai_score_threshold": 7.0,
+    "time_window_hours": 24,
+    "max_items": 24,
+    "category_groups": {
+      "ai": {
+        "name": "AI / ML / Developer Tools",
+        "limit": 11,
+        "categories": ["ai-news", "ai-tools", "ai-open-source", "github-trending"]
+      },
+      "finance": {
+        "name": "Finance / Markets / Earnings",
+        "limit": 9,
+        "categories": ["finance", "markets", "equities", "china-markets", "macro-markets", "semiconductors"]
+      }
+    },
+    "default_group": "other",
+    "default_group_limit": 4
   },
   "webhook": {
     "enabled": true,
@@ -118,9 +232,7 @@
     "platform": "feishu",
     "layout": "collapsible",
     "fallback_layout": "markdown",
-    "languages": [
-      "zh"
-    ],
+    "languages": ["zh"],
     "request_body": {
       "msg_type": "interactive",
       "card": {
