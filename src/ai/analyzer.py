@@ -5,7 +5,13 @@ import json
 import re
 from typing import List, Optional
 from openai import APIStatusError
-from tenacity import RetryError, retry, stop_after_attempt, wait_exponential
+from tenacity import (
+    RetryError,
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    wait_exponential,
+)
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, MofNCompleteColumn
 
 from .client import AIClient
@@ -14,6 +20,23 @@ from .utils import parse_json_response
 from ..models import ContentItem
 
 DEFAULT_THROTTLE_SEC = 0.0
+FATAL_AI_STATUS_CODES = {401, 402, 403}
+
+
+def _root_error(error: Exception) -> Exception:
+    if isinstance(error, RetryError) and error.last_attempt.failed:
+        return error.last_attempt.exception()
+    return error
+
+
+def _is_retryable_analysis_error(error: Exception) -> bool:
+    cause = _root_error(error)
+    if (
+        isinstance(cause, APIStatusError)
+        and cause.status_code in FATAL_AI_STATUS_CODES
+    ):
+        return False
+    return True
 
 
 class ContentAnalyzer:
@@ -44,9 +67,7 @@ class ContentAnalyzer:
 
     @staticmethod
     def _format_analysis_error(error: Exception) -> str:
-        cause = error
-        if isinstance(error, RetryError) and error.last_attempt.failed:
-            cause = error.last_attempt.exception()
+        cause = _root_error(error)
 
         if isinstance(cause, APIStatusError):
             body = ""
@@ -63,23 +84,40 @@ class ContentAnalyzer:
 
         return f"{type(cause).__name__}: {cause}"
 
+    @staticmethod
+    def _is_fatal_analysis_error(error: Exception) -> bool:
+        cause = _root_error(error)
+        return (
+            isinstance(cause, APIStatusError)
+            and cause.status_code in FATAL_AI_STATUS_CODES
+        )
+
     async def analyze_batch(self, items: List[ContentItem]) -> List[ContentItem]:
         throttle_sec = self._get_throttle_sec()
         concurrency = self._get_concurrency()
         semaphore = asyncio.Semaphore(concurrency)
+        fatal_error: Optional[Exception] = None
 
         async def _process(item: ContentItem, index: int, progress_task) -> ContentItem:
+            nonlocal fatal_error
             async with semaphore:
-                try:
-                    await self._analyze_item(item)
-                except Exception as e:
-                    print(
-                        f"Error analyzing item {item.id}: "
-                        f"{self._format_analysis_error(e)}"
-                    )
+                if fatal_error is not None:
                     item.ai_score = 0.0
-                    item.ai_reason = "Analysis failed"
+                    item.ai_reason = "Analysis skipped after fatal AI error"
                     item.ai_summary = item.title
+                else:
+                    try:
+                        await self._analyze_item(item)
+                    except Exception as e:
+                        print(
+                            f"Error analyzing item {item.id}: "
+                            f"{self._format_analysis_error(e)}"
+                        )
+                        if self._is_fatal_analysis_error(e):
+                            fatal_error = e
+                        item.ai_score = 0.0
+                        item.ai_reason = "Analysis failed"
+                        item.ai_summary = item.title
                 if throttle_sec > 0 and index < len(items) - 1:
                     await asyncio.sleep(throttle_sec)
             progress.advance(progress_task)
@@ -102,7 +140,8 @@ class ContentAnalyzer:
 
     @retry(
         stop=stop_after_attempt(3),
-        wait=wait_exponential(min=2, max=10)
+        wait=wait_exponential(min=2, max=10),
+        retry=retry_if_exception(_is_retryable_analysis_error),
     )
     async def _analyze_item(self, item: ContentItem) -> None:
         """Analyze a single content item.

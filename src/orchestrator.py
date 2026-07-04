@@ -101,6 +101,8 @@ class HorizonOrchestrator:
                     f"→ {len(merged_items)} unique items\n"
                 )
 
+            merged_items = self.apply_analysis_cap(merged_items)
+
             # 4. Analyze with AI
             analyzed_items = await self._analyze_content(merged_items)
             self.console.print(f"🤖 Analyzed {len(analyzed_items)} items with AI\n")
@@ -612,6 +614,45 @@ class HorizonOrchestrator:
             group_limits=group_limits,
             duplicate_categories=sorted(set(duplicate_categories)),
         )
+
+    def apply_analysis_cap(self, items: List[ContentItem]) -> List[ContentItem]:
+        """Limit items before AI analysis to keep smoke runs predictable."""
+        cap = self.config.filtering.analysis_max_items
+        if cap is None or len(items) <= cap:
+            return items
+
+        buckets: Dict[str, List[ContentItem]] = defaultdict(list)
+        for item in sorted(
+            items,
+            key=lambda item: item.published_at or item.fetched_at,
+            reverse=True,
+        ):
+            buckets[item.source_type.value].append(item)
+
+        selected: List[ContentItem] = []
+        source_keys = sorted(buckets)
+        while len(selected) < cap and source_keys:
+            next_source_keys: List[str] = []
+            for source_key in source_keys:
+                source_items = buckets[source_key]
+                if source_items and len(selected) < cap:
+                    selected.append(source_items.pop(0))
+                if source_items:
+                    next_source_keys.append(source_key)
+            source_keys = next_source_keys
+
+        counts: Dict[str, int] = defaultdict(int)
+        for item in selected:
+            counts[item.source_type.value] += 1
+        breakdown = ", ".join(
+            f"{source}: {count}" for source, count in sorted(counts.items())
+        )
+        self.console.print(
+            f"🧪 Analysis cap selected {len(selected)}/{len(items)} items"
+            f" ({breakdown})\n"
+        )
+
+        return selected
 
     async def _expand_twitter_discussion(self, items: List[ContentItem]) -> None:
         """Second-stage: fetch reply text for important Twitter items and re-analyze.
