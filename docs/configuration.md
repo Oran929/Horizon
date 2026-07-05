@@ -498,6 +498,33 @@ Example:
 - Unset variables are left as `${NAME}` instead of becoming an empty string, so configuration mistakes fail loudly downstream.
 - Expansion is recursive through dicts, lists, and tuples; non-string values are left unchanged.
 
+## Briefing Streams
+
+An optional `briefing` block gives a run a stable stream identity. Horizon uses
+it in Markdown titles, Feishu/Lark card titles, saved summary filenames, and
+GitHub Pages post filenames.
+
+```json
+{
+  "briefing": {
+    "slug": "ainews",
+    "title_zh": "AI行业热点",
+    "title_en": "AI Industry Highlights"
+  }
+}
+```
+
+- `slug`: Lowercase stream identifier used in filenames, such as `ainews` or
+  `economy`.
+- `title_zh` / `title_en`: Human-readable stream titles for generated
+  briefings.
+
+Without `briefing`, Horizon keeps the legacy filenames:
+`horizon-YYYY-MM-DD-zh.md` and `YYYY-MM-DD-summary-zh.md`. With
+`briefing.slug`, filenames become stream-specific, for example
+`horizon-YYYY-MM-DD-ainews-zh.md` and
+`YYYY-MM-DD-ainews-summary-zh.md`.
+
 ## Email Subscription
 
 Email delivery is optional and disabled unless `email.enabled` is `true`. Horizon uses SMTP to send daily summaries and IMAP to check subscribe/unsubscribe requests.
@@ -576,7 +603,7 @@ Webhook notification is optional and disabled unless `webhook.enabled` is `true`
 ```
 
 - `enabled`: Turns webhook delivery on or off. The default is `false`.
-- `url_env`: Environment variable that contains the webhook URL. For example, set `HORIZON_WEBHOOK_URL=https://...` in `.env`.
+- `url_env`: Environment variable that contains the webhook URL. For example, set `HORIZON_WEBHOOK_URL=https://...` in `.env`, or use stream-specific variables such as `HORIZON_AINEWS_URL` and `HORIZON_ECONOMY_URL`.
 - `delivery`: Controls how messages are sent. Use `summary` for one full message, or `summary_and_items` for one overview message followed by one message per selected item.
 - `overview_position`: Controls where the overview is sent in `summary_and_items` mode. Use `first` for the traditional order, or `last` to send item details in reverse and keep the overview as the newest chat message.
 - `platform`: Optional webhook platform hint. Use `generic` by default, or `feishu` / `lark` to enable platform-specific card rendering.
@@ -729,7 +756,7 @@ With this layout, Horizon sends one interactive card containing the overview and
 
 ## Static Site
 
-Horizon writes generated summaries to `data/summaries/` and copies publishable Markdown into `docs/` for the GitHub Pages site. The repository includes a ready-to-use workflow at `.github/workflows/daily-summary.yml`.
+Horizon writes generated summaries to `data/summaries/` and copies publishable Markdown into `docs/` for the GitHub Pages site. Stream-specific GitHub Actions can copy different config files into `data/config.json`; this repository includes separate examples at `.github/workflows/ainews-summary.yml` and `.github/workflows/economy-summary.yml`.
 
 To use GitHub Pages, enable Pages for the repository and run the scheduled workflow or trigger it manually. The generated site is built from the `docs/` directory.
 

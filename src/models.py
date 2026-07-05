@@ -1,5 +1,6 @@
 """Core data models for Horizon."""
 
+import re
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional, List, Dict, Any, Union
@@ -422,6 +423,31 @@ class FilteringConfig(BaseModel):
     default_group_limit: Optional[int] = Field(default=None, gt=0)
 
 
+class BriefingConfig(BaseModel):
+    """Optional metadata for a named briefing stream."""
+
+    slug: str
+    title_zh: Optional[str] = None
+    title_en: Optional[str] = None
+
+    @field_validator("slug")
+    @classmethod
+    def validate_slug(cls, v: str) -> str:
+        slug = v.strip().lower()
+        if not slug:
+            raise ValueError("briefing.slug cannot be empty")
+        if not re.fullmatch(r"[a-z0-9][a-z0-9_-]*", slug):
+            raise ValueError(
+                "briefing.slug must use lowercase letters, digits, underscores, or hyphens"
+            )
+        return slug
+
+    def title_for(self, language: str) -> str | None:
+        if language == "zh":
+            return self.title_zh or self.title_en
+        return self.title_en or self.title_zh
+
+
 class Config(BaseModel):
     """Main configuration model."""
 
@@ -429,5 +455,6 @@ class Config(BaseModel):
     ai: AIConfig
     sources: SourcesConfig
     filtering: FilteringConfig
+    briefing: Optional[BriefingConfig] = None
     email: Optional[EmailConfig] = None
     webhook: Optional[WebhookConfig] = None

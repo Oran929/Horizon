@@ -319,7 +319,7 @@ docker compose run --rm horizon --hours 48   # 抓取最近 48 小时的内容
 
 ### 4. 自动化（可选）
 
-Horizon 非常适合作为 **GitHub Actions** 定时任务运行。查看 [`.github/workflows/daily-summary.yml`](.github/workflows/daily-summary.yml) 获取现成的工作流配置，可自动生成日报并部署到 GitHub Pages。
+Horizon 非常适合作为 **GitHub Actions** 定时任务运行。查看 [`.github/workflows/ainews-summary.yml`](.github/workflows/ainews-summary.yml) 和 [`.github/workflows/economy-summary.yml`](.github/workflows/economy-summary.yml) 获取按信息流拆分的工作流配置，可自动生成日报并部署到 GitHub Pages。
 
 ## 支持的信息源
 

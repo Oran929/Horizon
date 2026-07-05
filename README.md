@@ -330,7 +330,7 @@ The generated report will be saved to `data/summaries/`.
 
 ### 4. Automate (Optional)
 
-Horizon works great as a **GitHub Actions** cron job. See [`.github/workflows/daily-summary.yml`](.github/workflows/daily-summary.yml) for a ready-to-use workflow that generates and deploys your daily briefing to GitHub Pages automatically.
+Horizon works great as a **GitHub Actions** cron job. See [`.github/workflows/ainews-summary.yml`](.github/workflows/ainews-summary.yml) and [`.github/workflows/economy-summary.yml`](.github/workflows/economy-summary.yml) for ready-to-use stream-specific workflows that generate and deploy daily briefings to GitHub Pages automatically.
 
 ## Supported Sources
 

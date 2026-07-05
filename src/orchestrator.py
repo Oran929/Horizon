@@ -4,6 +4,7 @@ import asyncio
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import List, Dict, Optional
 from urllib.parse import urlparse
 import httpx
@@ -57,7 +58,11 @@ class HorizonOrchestrator:
         self.console = Console()
         self.email_manager = EmailManager(config.email, console=self.console) if config.email else None
         self.webhook_notifier = (
-            WebhookNotifier(config.webhook, console=self.console)
+            WebhookNotifier(
+                config.webhook,
+                console=self.console,
+                briefing=config.briefing,
+            )
             if config.webhook and config.webhook.enabled
             else None
         )
@@ -151,17 +156,27 @@ class HorizonOrchestrator:
             today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
             for lang in self.config.ai.languages:
                 summarizer = DailySummarizer()
-                summary = await summarizer.generate_summary(important_items, today, len(all_items), language=lang)
+                briefing_title = self._briefing_title(lang)
+                summary = await summarizer.generate_summary(
+                    important_items,
+                    today,
+                    len(all_items),
+                    language=lang,
+                    title=briefing_title,
+                )
 
                 # Save to data/summaries/
-                summary_path = self.storage.save_daily_summary(today, summary, language=lang)
+                summary_path = self.storage.save_daily_summary(
+                    today,
+                    summary,
+                    language=lang,
+                    briefing_slug=self._briefing_slug(),
+                )
                 self.console.print(f"💾 Saved {lang.upper()} summary to: {summary_path}\n")
 
                 # Copy to docs/ for GitHub Pages
                 try:
-                    from pathlib import Path
-
-                    post_filename = f"{today}-summary-{lang}.md"
+                    post_filename = self._post_filename(today, lang)
                     posts_dir = Path("docs/_posts")
                     posts_dir.mkdir(parents=True, exist_ok=True)
 
@@ -171,9 +186,10 @@ class HorizonOrchestrator:
                     front_matter = (
                         "---\n"
                         "layout: default\n"
-                        f"title: \"Horizon Summary: {today} ({lang.upper()})\"\n"
+                        f"title: \"{self._post_title(today, lang)}\"\n"
                         f"date: {today}\n"
                         f"lang: {lang}\n"
+                        f"briefing: {self._briefing_slug() or 'daily'}\n"
                         "---\n\n"
                     )
 
@@ -196,7 +212,8 @@ class HorizonOrchestrator:
                 if self.email_manager and self.config.email and self.config.email.enabled:
                     self.console.print(f"📧 Sending {lang.upper()} email summary...")
                     subscribers = self.storage.load_subscribers()
-                    subject = f"Horizon Summary ({lang.upper()}) - {today}"
+                    subject_title = briefing_title or "Horizon Summary"
+                    subject = f"{subject_title} ({lang.upper()}) - {today}"
                     self.email_manager.send_daily_summary(summary, subject, subscribers)
 
                 # Send webhook notification if configured
@@ -245,6 +262,26 @@ class HorizonOrchestrator:
             hours = self.config.filtering.time_window_hours
             since = datetime.now(timezone.utc) - timedelta(hours=hours)
         return since
+
+    def _briefing_slug(self) -> str | None:
+        return self.config.briefing.slug if self.config.briefing else None
+
+    def _briefing_title(self, language: str) -> str | None:
+        if not self.config.briefing:
+            return None
+        return self.config.briefing.title_for(language)
+
+    def _post_filename(self, date: str, language: str) -> str:
+        slug = self._briefing_slug()
+        if slug:
+            return f"{date}-{slug}-summary-{language}.md"
+        return f"{date}-summary-{language}.md"
+
+    def _post_title(self, date: str, language: str) -> str:
+        title = self._briefing_title(language)
+        if title:
+            return f"{title}: {date} ({language.upper()})"
+        return f"Horizon Summary: {date} ({language.upper()})"
 
     async def fetch_all_sources(self, since: datetime) -> List[ContentItem]:
         """Fetch content from all configured sources.

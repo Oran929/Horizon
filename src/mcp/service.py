@@ -454,13 +454,19 @@ class HorizonPipelineService:
             date_str,
             total_fetched,
             language=language,
+            title=ctx.config.briefing.title_for(language) if ctx.config.briefing else None,
         )
 
         run_summary_path = self.run_store.save_summary(run_id, language, summary)
         published_path = None
         if save_to_horizon_data:
             storage = make_storage(ctx.runtime, ctx.config_path)
-            published_path = storage.save_daily_summary(date_str, summary, language=language)
+            published_path = storage.save_daily_summary(
+                date_str,
+                summary,
+                language=language,
+                briefing_slug=ctx.config.briefing.slug if ctx.config.briefing else None,
+            )
 
         summary_meta = {
             "summary_stage": stage,

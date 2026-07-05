@@ -1,5 +1,10 @@
 {
   "version": "1.0",
+  "briefing": {
+    "slug": "daily",
+    "title_zh": "Horizon 每日速递",
+    "title_en": "Horizon Daily"
+  },
   "ai": {
     "provider": "openai",
     "model": "gpt-4",

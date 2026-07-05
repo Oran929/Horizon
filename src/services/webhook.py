@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 import httpx
 
 from ..ai.markdown_utils import clean_app_summary_markdown
-from ..models import ContentItem, WebhookConfig
+from ..models import BriefingConfig, ContentItem, WebhookConfig
 from ..ai.summarizer import DailySummarizer
 
 logger = logging.getLogger(__name__)
@@ -218,8 +218,14 @@ def redact_headers(headers: dict[str, str]) -> dict[str, str]:
 class WebhookNotifier:
     """Sends webhook notifications after pipeline completion or failure."""
 
-    def __init__(self, config: WebhookConfig, console=None):
+    def __init__(
+        self,
+        config: WebhookConfig,
+        console=None,
+        briefing: BriefingConfig | None = None,
+    ):
         self.config = config
+        self.briefing = briefing
         if console is None:
             try:
                 from rich.console import Console
@@ -236,6 +242,17 @@ class WebhookNotifier:
             self.console = console
         self.url = None
         self._validate_config()  # sets self.url or raises ValueError
+
+    def _briefing_title(self, lang: str) -> str | None:
+        if not self.briefing:
+            return None
+        return self.briefing.title_for(lang)
+
+    def _dated_title(self, lang: str, date: str, suffix_zh: str, suffix_en: str) -> str:
+        title = self._briefing_title(lang)
+        if title:
+            return f"{title} {date}"
+        return f"Horizon {date} {suffix_zh}" if lang == "zh" else f"Horizon {date} {suffix_en}"
 
     def _validate_url(self, url: str) -> str:
         """Validate webhook URL has a valid scheme (http/https) and hostname.
@@ -345,26 +362,29 @@ class WebhookNotifier:
         lang: str,
     ) -> str:
         """Build a non-redundant overview for a card that already lists item panels."""
+        title = self._briefing_title(lang)
         if lang == "zh":
+            header = title or "Horizon 每日速递"
             if item_count == 0:
                 return (
-                    f"# Horizon 每日速递 - {date}\n\n"
+                    f"# {header} - {date}\n\n"
                     f"> 已分析 {all_items_count} 条内容，暂无达到重要性阈值的资讯。"
                 )
             return (
-                f"# Horizon 每日速递 - {date}\n\n"
+                f"# {header} - {date}\n\n"
                 f"> 从 {all_items_count} 条内容中筛选出 {item_count} 条重要资讯。\n\n"
                 "点击下方新闻面板即可在飞书内展开阅读全文。"
             )
 
+        header = title or "Horizon Daily"
         if item_count == 0:
             return (
-                f"# Horizon Daily - {date}\n\n"
+                f"# {header} - {date}\n\n"
                 f"> Analyzed {all_items_count} items, but none met the importance threshold."
             )
 
         return (
-            f"# Horizon Daily - {date}\n\n"
+            f"# {header} - {date}\n\n"
             f"> Selected {item_count} important items from {all_items_count} fetched items.\n\n"
             "Expand the panels below to read the full briefing inside Feishu/Lark."
         )
@@ -414,10 +434,11 @@ class WebhookNotifier:
                 "header": {
                     "title": {
                         "tag": "plain_text",
-                        "content": (
-                            f"Horizon {date} 折叠日报"
-                            if lang == "zh"
-                            else f"Horizon {date} Collapsible Daily"
+                        "content": self._dated_title(
+                            lang,
+                            date,
+                            "折叠日报",
+                            "Collapsible Daily",
                         ),
                     },
                     "template": "blue",
@@ -454,6 +475,8 @@ class WebhookNotifier:
         base_vars = {
             "date": date,
             "language": lang,
+            "briefing_slug": self.briefing.slug if self.briefing else "",
+            "briefing_title": self._briefing_title(lang) or "",
             "important_items": len(important_items),
             "all_items": all_items_count,
             "result": "success",
@@ -464,10 +487,11 @@ class WebhookNotifier:
             return [
                 {
                     **base_vars,
-                    "message_title": (
-                        f"Horizon {date} 折叠日报"
-                        if lang == "zh"
-                        else f"Horizon {date} Collapsible Daily"
+                    "message_title": self._dated_title(
+                        lang,
+                        date,
+                        "折叠日报",
+                        "Collapsible Daily",
                     ),
                     "message_kind": "collapsible",
                     "summary": self._build_feishu_collapsible_overview(
@@ -494,13 +518,15 @@ class WebhookNotifier:
                 date,
                 all_items_count,
                 language=lang,
+                title=self._briefing_title(lang),
             )
             overview_message = {
                 **base_vars,
-                "message_title": (
-                    f"Horizon {date} 总览"
-                    if lang == "zh"
-                    else f"Horizon {date} Overview"
+                "message_title": self._dated_title(
+                    lang,
+                    date,
+                    "总览",
+                    "Overview",
                 ),
                 "message_kind": "overview",
                 "summary": overview,
@@ -535,9 +561,7 @@ class WebhookNotifier:
         return [
             {
                 **base_vars,
-                "message_title": (
-                    f"Horizon {date} 日报" if lang == "zh" else f"Horizon {date} Daily"
-                ),
+                "message_title": self._dated_title(lang, date, "日报", "Daily"),
                 "message_kind": "summary",
                 "summary": summary,
             }

@@ -1,0 +1,172 @@
+{
+  "version": "1.0",
+  "briefing": {
+    "slug": "economy",
+    "title_zh": "金融市场摘要",
+    "title_en": "Financial Market Briefing"
+  },
+  "ai": {
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "base_url": "https://api.deepseek.com",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "temperature": 0.3,
+    "max_tokens": 8192,
+    "throttle_sec": 1,
+    "languages": ["zh"],
+    "analysis_concurrency": 2,
+    "enrichment_concurrency": 2
+  },
+  "sources": {
+    "github": [],
+    "hackernews": {
+      "enabled": false,
+      "fetch_top_stories": 40,
+      "min_score": 120
+    },
+    "rss": [
+      {
+        "name": "SemiAnalysis",
+        "url": "https://newsletter.semianalysis.com/feed",
+        "enabled": true,
+        "category": "semiconductors"
+      },
+      {
+        "name": "CNBC Finance",
+        "url": "https://www.cnbc.com/id/10000664/device/rss/rss.html",
+        "enabled": true,
+        "category": "finance"
+      },
+      {
+        "name": "CNBC Markets",
+        "url": "https://www.cnbc.com/id/15839069/device/rss/rss.html",
+        "enabled": true,
+        "category": "markets"
+      },
+      {
+        "name": "Yahoo Finance Top Stories",
+        "url": "https://finance.yahoo.com/news/rssindex",
+        "enabled": true,
+        "category": "finance"
+      }
+    ],
+    "reddit": {
+      "enabled": false,
+      "subreddits": [],
+      "users": [],
+      "fetch_comments": 0
+    },
+    "telegram": {
+      "enabled": false,
+      "channels": []
+    },
+    "twitter": {
+      "enabled": false,
+      "users": [],
+      "fetch_limit": 20,
+      "fetch_reply_text": false,
+      "max_replies_per_tweet": 3,
+      "max_tweets_to_expand": 10,
+      "reply_min_likes": 10
+    },
+    "openbb": {
+      "enabled": true,
+      "fetch_filings": false,
+      "filings_provider": "sec",
+      "watchlists": [
+        {
+          "name": "ai_megacaps",
+          "enabled": true,
+          "provider": "yfinance",
+          "fetch_limit": 20,
+          "category": "equities",
+          "symbols": ["NVDA", "MSFT", "GOOGL", "META", "AMZN", "TSLA", "AAPL", "AMD", "AVGO", "TSM", "ASML", "ARM"]
+        },
+        {
+          "name": "china_adr_and_etf",
+          "enabled": true,
+          "provider": "yfinance",
+          "fetch_limit": 20,
+          "category": "china-markets",
+          "symbols": ["BABA", "TCEHY", "PDD", "BIDU", "KWEB", "MCHI", "ASHR"]
+        }
+      ]
+    },
+    "ossinsight": {
+      "enabled": false,
+      "period": "past_24_hours",
+      "languages": ["All", "Python", "TypeScript"],
+      "keywords": [],
+      "min_stars": 15,
+      "max_items": 30
+    },
+    "gdelt": {
+      "enabled": true,
+      "query": "(Federal Reserve OR earnings OR funds OR A-shares OR Hong Kong stocks OR NVIDIA OR AMD OR TSMC OR semiconductor OR AI chips)",
+      "mode": "ArtList",
+      "max_records": 80,
+      "timespan": "24h",
+      "language": null,
+      "country": null,
+      "category": "macro-markets"
+    },
+    "google_news": {
+      "enabled": true,
+      "query": "基金 动向 OR A股 市场 分析 OR 港股 市场 分析 OR 美股 财报 OR 半导体 订单 OR AI 芯片",
+      "language": "zh-CN",
+      "country": "CN",
+      "ceid": "CN:zh-Hans",
+      "max_results": 80,
+      "category": "china-markets"
+    }
+  },
+  "filtering": {
+    "ai_score_threshold": 7.0,
+    "time_window_hours": 24,
+    "max_items": 18,
+    "category_groups": {
+      "finance": {
+        "name": "Finance / Markets / Earnings",
+        "limit": 18,
+        "categories": ["finance", "markets", "equities", "china-markets", "macro-markets", "semiconductors"]
+      }
+    },
+    "default_group": "other",
+    "default_group_limit": 2
+  },
+  "webhook": {
+    "enabled": true,
+    "url_env": "HORIZON_ECONOMY_URL",
+    "delivery": "summary_and_items",
+    "overview_position": "last",
+    "platform": "feishu",
+    "layout": "collapsible",
+    "fallback_layout": "markdown",
+    "languages": ["zh"],
+    "request_body": {
+      "msg_type": "interactive",
+      "card": {
+        "schema": "2.0",
+        "config": {
+          "wide_screen_mode": true
+        },
+        "header": {
+          "title": {
+            "tag": "plain_text",
+            "content": "#{message_title}"
+          },
+          "template": "blue"
+        },
+        "body": {
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "#{summary}"
+            }
+          ]
+        }
+      }
+    },
+    "headers": ""
+  }
+}

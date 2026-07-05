@@ -1,0 +1,222 @@
+{
+  "version": "1.0",
+  "briefing": {
+    "slug": "ainews",
+    "title_zh": "AI行业热点",
+    "title_en": "AI Industry Highlights"
+  },
+  "ai": {
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "base_url": "https://api.deepseek.com",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "temperature": 0.3,
+    "max_tokens": 8192,
+    "throttle_sec": 1,
+    "languages": ["zh"],
+    "analysis_concurrency": 2,
+    "enrichment_concurrency": 2
+  },
+  "sources": {
+    "github": [
+      {
+        "type": "user_events",
+        "username": "karpathy",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "vllm-project",
+        "repo": "vllm",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "sgl-project",
+        "repo": "sglang",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "huggingface",
+        "repo": "transformers",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "ollama",
+        "repo": "ollama",
+        "enabled": true
+      },
+      {
+        "type": "repo_releases",
+        "owner": "openai",
+        "repo": "openai-python",
+        "enabled": true
+      }
+    ],
+    "hackernews": {
+      "enabled": true,
+      "fetch_top_stories": 40,
+      "min_score": 120
+    },
+    "rss": [
+      {
+        "name": "Simon Willison",
+        "url": "https://simonwillison.net/atom/everything/",
+        "enabled": true,
+        "category": "ai-tools"
+      },
+      {
+        "name": "Latent Space",
+        "url": "https://www.latent.space/feed",
+        "enabled": true,
+        "category": "ai-news"
+      },
+      {
+        "name": "Hugging Face Blog",
+        "url": "https://huggingface.co/blog/feed.xml",
+        "enabled": true,
+        "category": "ai-open-source"
+      },
+      {
+        "name": "GitHub Trending - Daily",
+        "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml",
+        "enabled": true,
+        "category": "github-trending"
+      }
+    ],
+    "reddit": {
+      "enabled": true,
+      "subreddits": [
+        {
+          "subreddit": "MachineLearning",
+          "enabled": true,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 12,
+          "min_score": 40
+        },
+        {
+          "subreddit": "LocalLLaMA",
+          "enabled": true,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 12,
+          "min_score": 40
+        },
+        {
+          "subreddit": "singularity",
+          "enabled": true,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 8,
+          "min_score": 80
+        }
+      ],
+      "users": [],
+      "fetch_comments": 6
+    },
+    "telegram": {
+      "enabled": true,
+      "channels": [
+        {
+          "channel": "zaihuapd",
+          "enabled": true,
+          "fetch_limit": 20
+        }
+      ]
+    },
+    "twitter": {
+      "enabled": false,
+      "users": ["karpathy", "sama", "ylecun", "AndrewYNg"],
+      "fetch_limit": 20,
+      "fetch_reply_text": false,
+      "max_replies_per_tweet": 3,
+      "max_tweets_to_expand": 10,
+      "reply_min_likes": 10
+    },
+    "openbb": {
+      "enabled": false,
+      "fetch_filings": false,
+      "filings_provider": "sec",
+      "watchlists": []
+    },
+    "ossinsight": {
+      "enabled": true,
+      "period": "past_24_hours",
+      "languages": ["All", "Python", "TypeScript", "Rust", "Jupyter Notebook"],
+      "keywords": ["ai", "llm", "agent", "rag", "inference", "model", "cuda", "transformer", "deep-learning"],
+      "min_stars": 15,
+      "max_items": 30
+    },
+    "gdelt": {
+      "enabled": true,
+      "query": "(artificial intelligence OR OpenAI OR Anthropic OR Gemini OR DeepSeek OR LLM OR AI agents OR machine learning)",
+      "mode": "ArtList",
+      "max_records": 80,
+      "timespan": "24h",
+      "language": null,
+      "country": null,
+      "category": "ai-news"
+    },
+    "google_news": {
+      "enabled": true,
+      "query": "AI 行业 热点 OR 大模型 产品 OR AI Agent OR 开源模型 OR 开发者工具",
+      "language": "zh-CN",
+      "country": "CN",
+      "ceid": "CN:zh-Hans",
+      "max_results": 80,
+      "category": "ai-news"
+    }
+  },
+  "filtering": {
+    "ai_score_threshold": 7.0,
+    "time_window_hours": 24,
+    "max_items": 18,
+    "category_groups": {
+      "ai": {
+        "name": "AI Industry / Products / Developer Tools",
+        "limit": 14,
+        "categories": ["ai-news", "ai-tools", "ai-open-source", "github-trending"]
+      }
+    },
+    "default_group": "other",
+    "default_group_limit": 4
+  },
+  "webhook": {
+    "enabled": true,
+    "url_env": "HORIZON_AINEWS_URL",
+    "delivery": "summary_and_items",
+    "overview_position": "last",
+    "platform": "feishu",
+    "layout": "collapsible",
+    "fallback_layout": "markdown",
+    "languages": ["zh"],
+    "request_body": {
+      "msg_type": "interactive",
+      "card": {
+        "schema": "2.0",
+        "config": {
+          "wide_screen_mode": true
+        },
+        "header": {
+          "title": {
+            "tag": "plain_text",
+            "content": "#{message_title}"
+          },
+          "template": "blue"
+        },
+        "body": {
+          "elements": [
+            {
+              "tag": "markdown",
+              "content": "#{summary}"
+            }
+          ]
+        }
+      }
+    },
+    "headers": ""
+  }
+}

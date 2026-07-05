@@ -108,14 +108,30 @@ class StorageManager:
 
         return self.config_path
 
-    def save_daily_summary(self, date: str, markdown: str, language: str = "en") -> Path:
-        filename = f"horizon-{date}-{language}.md"
+    def save_daily_summary(
+        self,
+        date: str,
+        markdown: str,
+        language: str = "en",
+        briefing_slug: str | None = None,
+    ) -> Path:
+        filename = self.daily_summary_filename(date, language, briefing_slug)
         filepath = self.summaries_dir / filename
 
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(markdown)
 
         return filepath
+
+    @staticmethod
+    def daily_summary_filename(
+        date: str,
+        language: str = "en",
+        briefing_slug: str | None = None,
+    ) -> str:
+        if briefing_slug:
+            return f"horizon-{date}-{briefing_slug}-{language}.md"
+        return f"horizon-{date}-{language}.md"
 
     def load_subscribers(self) -> list:
         """Loads the list of email subscribers."""
