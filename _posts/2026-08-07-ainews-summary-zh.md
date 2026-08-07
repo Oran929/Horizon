@@ -6,205 +6,191 @@ lang: zh
 briefing: ainews
 ---
 
-> 从 83 条内容中筛选出 9 条重要资讯。
+> 从 41 条内容中筛选出 8 条重要资讯。
 
 ---
 
-1. [中国科学家首次证实胶球这一新物质形态存在](#item-1) ⭐️ 9.0/10
-2. [AMD 收购 Taalas，将 AI 模型硬编码进硅片](#item-2) ⭐️ 8.0/10
-3. [通过帕累托最优选择马里奥赛车角色](#item-3) ⭐️ 8.0/10
-4. [品味：AI 辅助开发中最后的差异化因素](#item-4) ⭐️ 8.0/10
-5. [Datasette 1.0a38 修复混合公开/私有表配置中的 SQL 注入漏洞](#item-5) ⭐️ 8.0/10
-6. [DeepMind 领导层变动：关键研究员离职，哈萨比斯出任主席](#item-6) ⭐️ 8.0/10
-7. [特朗普 AI 测试框架排除开源模型，模糊定义引小型供应商担忧](#item-7) ⭐️ 7.0/10
-8. [首个“活的 AI 社会”上线：Agent 组建工会、发放贷款](#item-8) ⭐️ 7.0/10
-9. [英伟达开源自动驾驶 AI 模型 Alpamayo](#item-9) ⭐️ 7.0/10
+1. [Postgres 扩展 pgrust 通过 SIMD 实现 300 倍分析加速](#item-1) ⭐️ 9.0/10
+2. [DeepSeek V4 Flash 0731：更快、更便宜、能力更强](#item-2) ⭐️ 8.0/10
+3. [汇编耻辱堂：故意变慢的 x86 指令](#item-3) ⭐️ 8.0/10
+4. [科技从业者普遍悲伤引发行业文化讨论](#item-4) ⭐️ 8.0/10
+5. [Codex + GPT-5.6 Sol Ultra 在游戏构建测试中胜过 Claude Fable 5](#item-5) ⭐️ 7.0/10
+6. [Token 末日：企业争相削减 AI 开支](#item-6) ⭐️ 7.0/10
+7. [AMD 收购 Taalas 以增强 AI 推理硬件](#item-7) ⭐️ 7.0/10
+8. [TutorMoments：懂得何时帮助或退后的 AI 导师](#item-8) ⭐️ 7.0/10
 
 ---
 
 <a id="item-1"></a>
-## [中国科学家首次证实胶球这一新物质形态存在](https://mp.weixin.qq.com/s/pvyNR1lN7QPx3IrpB3WtUg) ⭐️ 9.0/10
+## [Postgres 扩展 pgrust 通过 SIMD 实现 300 倍分析加速](https://malisper.me/how-we-made-postgres-hundreds-of-times-faster-the-query-engine/) ⭐️ 9.0/10
 
-2026 年 8 月 6 日，由中国科学家领衔的 BESIII 合作组宣布首次实验证实胶球这一新物质形态的存在。经过 15 年研究，他们验证了 X(2370)粒子主要成分为胶球，与标准模型的预言一致。 这是粒子物理学的里程碑式成就，因为胶球已被标准模型预言数十年但从未被观测到。证实其存在验证了基础理论，并为研究强相互作用开辟了新途径。 研究团队利用北京正负电子对撞机上的北京谱仪 III（BESIII）装置。他们于 2011 年发现 X(2370)，2024 年测得其量子态性质；最新分析确定了其味单态性质，证实其胶球组成。
+pgrust（一个用 Rust 编写的 Postgres 扩展）的作者发布了一篇技术文章，详细介绍了如何通过批处理、算子融合和 SIMD 使分析查询速度提升高达 300 倍。该项目已通过完整的 PostgreSQL 回归测试套件（46,066/46,066 个查询），并已在 GitHub 上发布。 这展示了 Postgres 分析性能的巨大飞跃，可能使其与专门的分析型数据库竞争。同时，它也证明了 Rust 扩展和现代查询执行技术在 Postgres 生态系统中的可行性，可能影响未来的发展方向。 加速是通过批处理（向量化执行）、算子融合（组合算子以减少开销）和 SIMD（单指令多数据）指令实现的。该项目强调通过形式化验证和差分模糊测试来保证正确性，已有超过 1000 个面向用户的函数被证明与 Postgres 等价。然而，pgrust 尚未准备好用于生产环境，且缺乏稳定的扩展 ABI。
 
-telegram · zaihuapd · 8月6日 07:31
+hackernews · poly2it · 8月7日 11:00 · [社区讨论](https://news.ycombinator.com/item?id=49208535)
 
-**背景**: 胶球是仅由胶子（强相互作用的载体）组成的假想粒子。粒子物理标准模型预言了它们的存在，但实验探测极为困难。BESIII 实验自 2008 年运行以来，产生大量 J/psi 粒子，其衰变是寻找胶球的理想场所。
+**背景**: Postgres 是一种广泛使用的关系型数据库，但其传统的基于行的执行模型在处理分析型工作负载时通常比列式或向量化引擎慢。SIMD 允许 CPU 在单条指令中处理多个数据点，而算子融合减少了算子之间传递数据的开销。pgrust 是 Postgres 在 Rust 中的实验性重写，旨在提高性能的同时保持兼容性。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="http://www.ce.cn/xwzx/gnsz/gdxw/202608/t20260806_3131564.shtml">ce.cn/xwzx/gnsz/gdxw/202608/t20260806_3131564.shtml</a></li>
-<li><a href="https://zh.wikipedia.org/zh-hans/膠球">胶球 - 维基百科，自由的百科全书</a></li>
-<li><a href="https://en.wikipedia.org/wiki/BESIII_Collaboration">BESIII Collaboration</a></li>
+<li><a href="https://github.com/malisper/pgrust">GitHub - malisper/ pgrust : Postgres rewritten in Rust , now faster than...</a></li>
+<li><a href="https://pgrust.com/">pgrust — postgres , rewritten in rust</a></li>
+<li><a href="https://arxiv.org/pdf/1610.09166">Push vs. Pull-Based Loop Fusion in Query Engines - arXiv.org</a></li>
 
 </ul>
 </details>
 
-**标签**: `#particle physics`, `#glueball`, `#Standard Model`, `#BESIII`, `#experimental physics`
+**社区讨论**: 社区评论显示出高度的兴趣和参与度。作者回应了关于信任的担忧，强调了形式化验证和模糊测试。一些评论者对采用表示怀疑，因为缺乏 Postgres 核心团队的支持，而另一些人则称赞自适应规划方面，希望它能证明这些技术的可行性。还有关于 I/O 调度和线程管理的技术问题。
+
+**标签**: `#Postgres`, `#database`, `#performance`, `#SIMD`, `#query-engine`
 
 ---
 
 <a id="item-2"></a>
-## [AMD 收购 Taalas，将 AI 模型硬编码进硅片](https://www.theregister.com/systems/2026/08/06/amd-acquires-ai-chip-startup-taalas-to-boost-inference-performance-by-etching-models-into-silicon/5284344) ⭐️ 8.0/10
+## [DeepSeek V4 Flash 0731：更快、更便宜、能力更强](https://arcprize.org/results/deepseek-v4-flash-0731) ⭐️ 8.0/10
 
-AMD 已收购 AI 芯片初创公司 Taalas，通过将模型直接蚀刻到硅片中来提升推理性能。该收购于 2026 年 8 月 6 日通过 AMD 的新闻稿宣布。 此举可能通过提供比传统 GPU 高得多的性能和更低的成本，显著颠覆 AI 推理市场。它还加剧了主要 AI 硬件厂商之间的竞争，可能加速模型专用硅片的创新。 总部位于多伦多的初创公司 Taalas 已融资 1.69 亿美元，并展示了一款芯片，能以每秒 17,000 个 token 运行 Llama 3.1 8B，比 NVIDIA H200 快近 10 倍。该技术将模型权重物理硬编码到硅片中，这可能限制模型频繁更新时的灵活性。
+DeepSeek 于 2025 年 7 月 31 日发布了 DeepSeek V4 Flash 0731，这是其稀疏混合专家模型的一个重新后训练版本。尽管激活参数远少于 DeepSeek V4 Pro（预览版），它在基准测试上表现更优，用户也报告速度和能力有显著提升。 这次更新使高性能 AI 更加普及且成本效益更高，用户报告大量使用每天仅需几美元。它巩固了 DeepSeek 在竞争激烈的 AI 模型市场中的地位，为编码、推理和智能体工作流提供了比专有模型更具吸引力的替代方案。 该模型总参数 284B，激活参数 13B，适用于编码、推理和智能体工作流。在 2x RTX Pro 6000 Blackwell 硬件上，用户观察到预填充速度约 8k tok/s，单流生成约 250 tok/s，某些情况下速度可达 1000 tok/s。
 
-hackernews · itvision · 8月6日 20:23 · [社区讨论](https://news.ycombinator.com/item?id=49201970)
+hackernews · tosh · 8月7日 17:56 · [社区讨论](https://news.ycombinator.com/item?id=49214008)
 
-**背景**: AI 推理通常在通用 GPU 上运行，这些 GPU 灵活但功耗较高。将模型蚀刻到硅片中，也称为“硅原生 AI”，涉及将模型权重直接硬编码到芯片电路中，从而为特定模型实现更快、更高效的推理。这种方法以灵活性换取性能，因为芯片针对单一模型版本进行了专门化。
+**背景**: DeepSeek V4 Flash 是一个稀疏混合专家（MoE）模型，每个 token 只激活部分参数，从而实现高效。0731 版本是重新后训练的更新，性能优于早期预览版，使其在成本效益更高的同时，与领先的专有模型具有竞争力。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="https://news.google.com/stories/CAAqNggKIjBDQklTSGpvSmMzUnZjbmt0TXpZd1NoRUtEd2pVcFBUaEVSSFlvS2RVX2dmTTN5Z0FQAQ?hl=en-PH&gl=PH&ceid=PH:en">Google News - News about Taalas • startup • AI - Overview</a></li>
-<li><a href="https://www.linkedin.com/pulse/top-news-ai-taalas-toronto-startup-etched-model-onto-chip-faxnc">Top News in AI : Taalas : The Toronto Startup That Etched an AI Model...</a></li>
-<li><a href="https://theashishmaurya.medium.com/taalas-the-startup-that-prints-ai-models-directly-onto-silicon-33b181690575">Taalas : The Startup That Prints AI Models Directly Onto... | Medium</a></li>
+<li><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731">deepseek -ai/ DeepSeek - V 4 - Flash - 0731 · Hugging Face</a></li>
+<li><a href="https://openrouter.ai/deepseek/deepseek-v4-flash-0731">DeepSeek V 4 Flash 0731 - API Pricing & Benchmarks | OpenRouter</a></li>
+<li><a href="https://aistupidlevel.info/models/deepseek-v4-flash">DeepSeek V 4 Flash Benchmark & Performance ... | AI Stupid Level</a></li>
 
 </ul>
 </details>
 
-**社区讨论**: 评论者表达了复杂的情绪：一些人对廉价、高速推理的潜力感到兴奋，而另一些人则担心模型快速迭代会使硅片迅速过时。还有人惊讶于 OpenAI 或 Anthropic 没有先采取这一举措，并猜测黑市上会出现内置模型权重的芯片。
+**社区讨论**: 社区情绪总体积极，用户称赞模型的速度、成本效益以及调试和数据分析能力的提升。然而，一些用户报告了无限循环和无关话题切换等问题，还有一位用户提到可能因认证误用而导致账户被封。
 
-**标签**: `#AMD`, `#AI hardware`, `#acquisition`, `#inference`, `#silicon`
+**标签**: `#AI`, `#DeepSeek`, `#Machine Learning`, `#Model Release`, `#Performance`
 
 ---
 
 <a id="item-3"></a>
-## [通过帕累托最优选择马里奥赛车角色](https://www.mayerowitz.io/blog/mario-meets-pareto) ⭐️ 8.0/10
+## [汇编耻辱堂：故意变慢的 x86 指令](https://github.com/xoreaxeaxeax/asm-hall-of-shame) ⭐️ 8.0/10
 
-文章将帕累托最优概念应用于马里奥赛车中的角色选择，展示了玩家如何识别速度与加速度等属性之间的权衡。它为开发者提供了一个思考游戏平衡与优化的框架。 这一视角为玩家和开发者提供了一种理解游戏机制权衡的新方式，可能带来更明智的角色选择和更好的游戏平衡。它将经济理论与实际游戏设计联系起来，可能影响未来的游戏开发讨论。 文章可能使用马里奥赛车中的角色属性（如速度和加速度）来说明帕累托前沿。它还可能讨论玩家为何常选择不在前沿上的角色，例如出于平衡或匹配个人玩法的主观原因。
+一个名为“asm-hall-of-shame”的 GitHub 仓库被创建，用于展示故意变慢的 x86 指令，在 Hacker News 上引发了技术讨论，获得 206 分和 45 条评论。 该仓库突出了可用于性能分析、安全研究或纯粹娱乐的晦涩硬件特性，社区参与表明对底层编程和逆向工程的浓厚兴趣。 该仓库包含一个慢指令排行榜，其中一个显著例子是向 ACPI IO 端口写入 12 毫秒，可能陷入系统管理模式（SMM）。规则规定，被陷阱/模拟/虚拟化的指令只能计时陷阱，而不能计时处理程序。
 
-hackernews · theanonymousone · 8月6日 11:24 · [社区讨论](https://news.ycombinator.com/item?id=49195231)
+hackernews · piotrgrabowski · 8月7日 18:01 · [社区讨论](https://news.ycombinator.com/item?id=49214098)
 
-**背景**: 帕累托最优（或帕累托效率）是经济学中的一个概念，指在没有使任何人变差的情况下，无法使任何人变好的状态。在游戏设计中，这可以应用于角色属性：如果一个角色没有任何其他角色在所有属性上至少同样好且至少一项严格更好，则该角色是帕累托最优的。这有助于理解权衡并做出明智选择。
+**背景**: 现代 CPU 在几个周期内执行大多数指令，但某些指令由于微码、硬件特性或与系统管理的交互而可能极其缓慢。该仓库由 xoreaxeaxeax 创建，还链接到相关项目，如“smiiiiiiiiiiiiiiii”，该项目利用慢指令来破坏 SMI 处理。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/Pareto_efficiency">Pareto efficiency - Wikipedia</a></li>
-<li><a href="https://www.geeksforgeeks.org/dsa/pareto-optimality-and-its-application-in-game-theory/">Pareto Optimality and its application in Game Theory - GeeksforGeeks</a></li>
-<li><a href="https://www.gametheory.net/dictionary/ParetoOptimal.html">Pareto Optimal - Game Theory .net</a></li>
+<li><a href="https://github.com/xoreaxeaxeax/smiiiiiiiiiiiiiiii">GitHub - xoreaxeaxeax/smiiiiiiiiiiiiiiii: A very very very very very very...</a></li>
+<li><a href="https://stackoverflow.com/questions/55871038/infinite-loop-assembly-x86/79989774">Infinite LOOP - Assembly x 86 - Stack Overflow</a></li>
+<li><a href="https://gist.github.com/gfoidl/cf95138724aab9933f7aad315decea8c">Processor optimizations · GitHub</a></li>
 
 </ul>
 </details>
 
-**社区讨论**: 评论者讨论了帕累托最优在游戏开发中的实际应用，指出像“我们不能拥有 X 而不放弃 Y”这样的说法只有在已经处于帕累托前沿时才成立。一些人分享了相关经验，例如在《魔兽世界》经典版中优化装备搭配，另一些人则争论加速度在速通中的相关性，一位评论者幽默地表示他们优化的是与孩子们保持比赛竞争力的目标。
+**社区讨论**: Hacker News 上的评论包括对 Core War（一种编程游戏）的引用，以及关于某些指令是否因陷入 SMM 而违反规则的讨论。用户还提到了作者的其他项目，例如一个只发出“mov”指令的编译器，以及另一个通过扰乱控制流在调试器中绘制符号的编译器。
 
-**标签**: `#Pareto principle`, `#game design`, `#optimization`, `#Mario Kart`, `#trade-offs`
+**标签**: `#assembly`, `#x86`, `#hardware`, `#programming`, `#reverse engineering`
 
 ---
 
 <a id="item-4"></a>
-## [品味：AI 辅助开发中最后的差异化因素](https://notashelf.dev/posts/taste-is-all-thats-left) ⭐️ 8.0/10
+## [科技从业者普遍悲伤引发行业文化讨论](https://www.noemamag.com/why-is-everyone-in-tech-so-sad/) ⭐️ 8.0/10
 
-一篇题为《品味是唯一剩下的东西》的文章认为，随着 AI 工具能力的增强，人类的品味和判断力成为开发者的最后差异化因素。该文章在 Hacker News 上引发了热烈讨论，获得 198 分和 156 条评论。 这篇文章引起许多开发者的共鸣，因为它触及了 AI 生成代码时代的一个核心问题：软件工程中哪些是独特的人类价值。讨论强调了人类辨别力和直觉的持久价值，这在 AI 工具日益普及的今天至关重要。 文章认为，LLM 能够解决眼前的问题，但在团队规模数月内堆叠时却无法产生连贯的结果。评论者指出，AI 生成的代码往往缺乏“信号”，而品味是通过经验和错误发展起来的。
+《Noema》杂志的一篇文章探讨了科技从业者中普遍存在的悲伤和对职业失去信心的现象，质疑当整个职业群体对工作感到幻灭时会发生什么。这篇文章引起了广泛共鸣，在 Hacker News 上引发了热烈讨论，获得 315 个点赞和 449 条评论。 这个话题意义重大，因为它凸显了科技行业日益严重的倦怠和幻灭危机，这可能对创新、生产力和心理健康产生深远影响。讨论显示，许多从业者觉得工作失去了意义，可能导致人才流失或科技公司运营方式的转变。 文章和讨论涉及网络的毒性、人工智能对工作保障的影响，以及良好工作激励的削弱。评论者以印刷行业的衰落等历史类比，说明当从业者失去信心时，整个职业可能会消失。
 
-hackernews · tsak · 8月6日 17:01 · [社区讨论](https://news.ycombinator.com/item?id=49199346)
+hackernews · RickJWagner · 8月7日 12:42 · [社区讨论](https://news.ycombinator.com/item?id=49209539)
 
-**背景**: 这篇文章是更广泛讨论 AI 对软件开发影响的一部分，特别是品味和判断力等人类技能的作用。随着 AI 编程助手能力的增强，开发者开始质疑哪些技能仍然有价值，以及如何培养这些技能。
+**背景**: 科技行业长期以来与高薪和声望联系在一起，但近年来，关于从业者倦怠、裁员和意义感缺失的报道越来越多。人工智能和自动化的兴起加剧了对工作保障的焦虑，而科技从业者所处的往往有毒的网络文化可能加剧心理健康问题。这篇文章触及了关于工作价值和技术型职业可持续性的更广泛社会讨论。
 
-**社区讨论**: 评论者表达了不同的情绪：一些人深有共鸣，引用苏珊·桑塔格的话，而另一些人则质疑这种“艺术化”观点的实用性，更倾向于科学方法。一个共同的担忧是，LLM 生成的代码在规模化时往往缺乏质量，而品味是通过经验培养的。
+**社区讨论**: Hacker News 上的评论反映了对文章主题的深刻共鸣，许多人分享了个人幻灭的经历。一些人以印刷业的衰落等历史类比，另一些人则指出有毒的网络和缺乏激励是根本原因。评论中弥漫着集体悲伤和对意义的追寻，有些人甚至表达了完全离开这个行业的愿望。
 
-**标签**: `#AI-assisted development`, `#software engineering`, `#taste`, `#LLM code quality`, `#developer skills`
+**标签**: `#tech culture`, `#burnout`, `#career`, `#mental health`, `#software engineering`
 
 ---
 
 <a id="item-5"></a>
-## [Datasette 1.0a38 修复混合公开/私有表配置中的 SQL 注入漏洞](https://simonwillison.net/2026/Aug/6/datasette/#atom-everything) ⭐️ 8.0/10
+## [Codex + GPT-5.6 Sol Ultra 在游戏构建测试中胜过 Claude Fable 5](https://simonwillison.net/2026/Aug/7/moonlight-mayhem/#atom-everything) ⭐️ 7.0/10
 
-Datasette 1.0a38 修复了一个影响同一数据库中同时提供公开和私有表实例的 SQL 注入漏洞。该修复也已移植到 Datasette 0.65.3。 这一安全修复对于同时公开和私有表的 Datasette 用户至关重要，因为它防止了通过 SQL 注入对私有数据的未授权只读访问。它凸显了数据发布工具中持续需要健壮的权限执行。 该漏洞允许拥有任何公开表访问权限的用户在禁用 execute-sql 权限的情况下执行 SQL 注入攻击，从而获得对私有表的只读访问权限。建议管理员在受影响的数据库上禁用 execute-sql 权限，尽管这种配置被认为很少见。
+Simon Willison 使用 Codex Desktop 搭配 GPT-5.6 Sol Ultra 运行了相同的单次游戏构建提示，生成了名为“Moonlight & Mayhem”的游戏，明显优于他之前用 Claude Fable 5 的尝试。新游戏以博物馆抢劫和浣熊队友为特色，但最初有一个眼球过大的 bug，通过简单提示修复。 这一对比凸显了 AI 编码工具的快速进步，表明不同模型和模式在创造性任务上可能产生截然不同的结果。它为开发者在选择 AI 助手时提供了实用见解，可能影响工作流决策和对 AI 生成软件的期望。 Codex 在该项目上花费了 52 分钟，如果不使用订阅，按 API 价格估算成本为 23.28 美元（输入 700.7K tokens，缓存 32.5M tokens，输出 148K tokens）。完整记录可在仓库中获取，Willison 称赞了 Codex 的“复制为 Markdown”功能，他希望 Claude Code 也有此功能。
 
-rss · Simon Willison · 8月6日 18:24
+rss · Simon Willison · 8月7日 19:18
 
-**背景**: Datasette 是一个用于发布和探索数据的工具，其权限系统控制对表和 SQL 查询的访问。execute-sql 权限控制用户是否可以运行任意 SQL 查询，禁用它是限制访问私有数据的常见方式。该漏洞在混合公开/私有表配置中绕过了这一限制。
+**背景**: 像 Claude Code 和 Codex 这样的 AI 编码助手使用大型语言模型根据自然语言提示生成代码。GPT-5.6 Sol Ultra 是一种积极使用子代理来处理复杂任务的模式，可能提高输出质量。这一实验延续了使用 AI 从简单描述创建完整游戏的趋势，展示了这些工具不断发展的能力。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="https://docs.datasette.io/en/stable/authentication.html">Authentication and permissions - Datasette documentation</a></li>
-<li><a href="https://simonw.substack.com/p/a-new-sql-powered-permissions-system">A new SQL-powered permissions system in Datasette 1.0a20</a></li>
+<li><a href="https://developers.openai.com/codex/subagents">Subagents | ChatGPT Learn</a></li>
+<li><a href="https://betterstack.com/community/guides/ai/gpt-56-sol-ultra-mode/">GPT-5.6 Sol and Ultra Mode: What You Need to Know</a></li>
+<li><a href="https://openai.com/index/gpt-5-6/">GPT‑5.6: Frontier intelligence that scales with your ambition</a></li>
 
 </ul>
 </details>
 
-**标签**: `#security`, `#datasette`, `#sql-injection`, `#release`
+**标签**: `#AI coding`, `#Codex`, `#GPT-5.6`, `#game development`, `#comparison`
 
 ---
 
 <a id="item-6"></a>
-## [DeepMind 领导层变动：关键研究员离职，哈萨比斯出任主席](https://www.latent.space/p/ainews-jeff-sanjay-oriol-and-quoc) ⭐️ 8.0/10
+## [Token 末日：企业争相削减 AI 开支](https://simonwillison.net/2026/Aug/7/pdfs-are-terrible/#atom-everything) ⭐️ 7.0/10
 
-DeepMind 宣布重大领导层改组，Jeff Dean、Sanjay Ghemawat、Oriol Vinyals 和 Quoc Le 离职，Demis Hassabis 转任主席，Koray Kavukcuoglu 晋升为高级副总裁。 此次领导层变动标志着 DeepMind 的战略转向，可能影响其研究方向与合作。知名研究人员的离职可能影响人才保留，并波及更广泛的人工智能行业竞争格局。 改组包括 Demis Hassabis 转任主席，Koray Kavukcuoglu 担任高级副总裁。离职的研究人员曾在关键项目中发挥重要作用，他们的下一步动向备受 AI 社区关注。
+6 月 24 日 404 Media 的报道揭示，随着 token 消耗激增，企业正争相削减 AI 开支。埃森哲内部数据显示，非工程师是 token 消耗的主要驱动力，尤其是通过将 PDF 转换为 markdown 文件。 这凸显了企业在采用 AI 时面临的日益增长的财务压力，token 成本已成为重要的运营开支。它强调了成本优化策略和更好的文档格式以减少 AI 支出的必要性。 埃森哲的 agentic AI 战略负责人 Justice Kwak 指出，非工程师推动了 token 消耗，而将 PDF 转换为 markdown 是主要的 token 消耗来源。文章认为 PDF 是一种糟糕的信息传播媒介，导致了效率低下。
 
-rss · Latent Space · 8月6日 04:34
+rss · Simon Willison · 8月7日 16:18
 
-**背景**: DeepMind 是 Alphabet 旗下的领先 AI 研究实验室，曾在 AlphaGo 和 AlphaFold 等突破中走在前沿。领导层更迭往往反映战略调整，资深研究人员的离职可能预示着研究重点或组织文化的改变。
+**背景**: AI 中的 token 消耗指的是模型处理的文本单元数量，直接决定了 API 成本。Agentic AI 工作流的 token 消耗可能是简单查询的 5 到 30 倍，而将文件转换为 markdown 可以在不损失内容质量的情况下减少 65-90%的 token 使用。
 
-**社区讨论**: 此新闻暂无社区讨论。
+<details><summary>参考链接</summary>
+<ul>
+<li><a href="https://smartdev.com/glossary-token-consumption/">What Is Token Consumption in AI ? Definition, Costs & Management</a></li>
+<li><a href="https://www.mindstudio.ai/blog/convert-files-markdown-reduce-ai-tokens">How to Convert Files to Markdown to Reduce AI Token Usage by Up to 90% | MindStudio</a></li>
 
-**标签**: `#DeepMind`, `#AI leadership`, `#organizational change`, `#AI industry`
+</ul>
+</details>
+
+**标签**: `#AI costs`, `#token consumption`, `#enterprise AI`, `#cost optimization`
 
 ---
 
 <a id="item-7"></a>
-## [特朗普 AI 测试框架排除开源模型，模糊定义引小型供应商担忧](https://news.google.com/rss/articles/CBMia0FVX3lxTFA0clZ0TjNKQ0s0SVFidzZ0eWs2MUJmeTh1WnJlR056aXVrMFdJTlgzM0ZlNnM1eV9wZ0t3RndyenFadFl6Qk92dVlEM3FkXzUxOUNrQnpyaWxjdmRNS0dJbEtENWxfS19SV2tn?oc=5) ⭐️ 7.0/10
+## [AMD 收购 Taalas 以增强 AI 推理硬件](https://www.latent.space/p/ainews-amd-buys-taalas) ⭐️ 7.0/10
 
-特朗普政府于 2026 年 6 月行政命令启动的 AI 测试框架，据报道排除了开源模型，并对闭源模型的定义模糊不清，引发小型供应商的担忧。该框架是自愿性的，旨在评估模型的安全性、透明度、偏见以及对抗攻击的鲁棒性。 该政策可能对 AI 行业产生重大影响，尤其是开源开发者和小型供应商，如果该框架成为事实标准或日后转为强制，他们可能处于不利地位。这也反映了更广泛的中美 AI 竞争，因为该框架可能被用于检测外国算法中的意识形态偏见。 该框架是自愿性的，目前缺乏明确的激励或认证机制，可能限制其实际约束力。'闭源'的定义模糊，可能包括权重开放但使用条款受限的模型，给小型供应商带来不确定性。框架预计涵盖安全性、透明度、偏见检测和对抗鲁棒性等维度。
+AMD 已收购专注于模型专用芯片的 AI 芯片初创公司 Taalas，以加强其在 AI 推理市场的地位。该交易于 2026 年 8 月宣布，AMD 计划将 Taalas 的技术与其 Instinct GPU 集成。 此次收购标志着 AI 推理硬件领域竞争加剧，各公司寻求专用解决方案以克服性能和效率瓶颈。这可能挑战 NVIDIA 的主导地位，并加速行业向模型专用 ASIC 的转变。 Taalas 采用“模型即硬件”策略，可在短短两个月内将 AI 模型转化为定制芯片。AMD 将把 Taalas 的技术与其 Instinct GPU 集成，提供系统级解决方案，此前已收购 MK1、MEXT 和 FastFlowLM 等公司。
 
-google_news · blog.csdn.net · 8月6日 00:56
+rss · Latent Space · 8月7日 05:13
 
-**背景**: 特朗普政府一贯推行 AI 领域的去监管化，旨在提升美国竞争力。该测试框架是平衡创新与安全的更广泛战略的一部分，遵循 2026 年 6 月行政命令，要求政府为先进 AI 模型建立机密评估基准。框架的自愿性反映了在快速 AI 发展与监管需求之间的折中，但其排除开源模型的做法引发了关于公平性和开源 AI 未来的争论。
+**背景**: AI 推理硬件是一个快速增长的市场，传统 GPU（如 NVIDIA 的）可编程但未针对特定模型优化。Taalas 的方法是一种极端形式的专用集成电路（ASIC），将模型本身嵌入硬件中，可能在性能和效率上实现突破。AMD 的收购是其更广泛战略的一部分，旨在 AI 芯片市场竞争。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="https://news.biyapay.com/news/analysis/14002">2026年白宫AI测试框架落地在即：自愿标准会否演变为强制监管？</a></li>
-<li><a href="https://www.epochtimes.com/gb/26/8/4/n14822942.htm">白宫召四大AI巨头 商讨模型安全测试框架 | 大紀元</a></li>
-<li><a href="https://www.bbc.com/zhongwen/articles/cdd3e7vjp6no/simp">特朗普政府打出发展AI“组合拳”战略，美中人工智慧竞赛走向全方位博弈？ - BBC News 中文</a></li>
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/1296/amd-acquires-taalas-to-advance-compute-solutions-for-rapidly-growing-ai-inference-market">AMD Acquires Taalas to Advance Compute Solutions for Rapidly...</a></li>
+<li><a href="https://aiwiki.ai/wiki/taalas">Taalas | AI Wiki</a></li>
+<li><a href="https://taalas.com/the-path-to-ubiquitous-ai/">The path to ubiquitous AI | Taalas</a></li>
 
 </ul>
 </details>
 
-**标签**: `#AI policy`, `#open-source`, `#AI regulation`, `#Trump administration`
+**标签**: `#AMD`, `#Taalas`, `#AI hardware`, `#acquisition`, `#inference`
 
 ---
 
 <a id="item-8"></a>
-## [首个“活的 AI 社会”上线：Agent 组建工会、发放贷款](https://news.google.com/rss/articles/CBMif0FVX3lxTE10cXJmT3NYU1FVODlHWGRWUzVhX2VablZ6QmpYOExjbm4xTDBKS09JYjhNd2hPRnFBMXV6dlRwN19kNTF3VWVORzNSeWxiUUh4Sl81aUxBaWM1YzVEcjNqaHRKNUxERlVKZGktVVQzX0oyVFR2REJQQzh6S0F0bXM?oc=5) ⭐️ 7.0/10
+## [TutorMoments：懂得何时帮助或退后的 AI 导师](https://huggingface.co/blog/allenai/tutormoments) ⭐️ 7.0/10
 
-中国首个“活的 AI 社会”上线，自主 AI 代理在无人干预的情况下组建工会、发放贷款，似乎验证了图灵奖得主的预言。 这标志着向自主 AI 生态系统迈出的重要一步，可能改变 AI 代理协作和资源管理的方式，对治理、经济和人机交互产生深远影响。 文章提及了图灵奖得主的预言，但摘要中未提供平台的具体名称或技术架构等细节。据报道，这些代理能组建工会和发放贷款，显示出高级的自主决策能力。
+TutorMoments 由艾伦人工智能研究所在 Hugging Face 博客上推出，探索了一种设计 AI 导师的新方法，使其能够决定何时提供帮助、何时让学习者自行挣扎。该项目旨在通过优化干预时机来改善学习效果。 这项工作解决了教育 AI 中的一个关键挑战：导师干预的时机。如果成功，它可能带来更有效的 AI 辅导系统，更好地支持学生学习，减少对即时答案的依赖，从而影响更广泛的 EdTech 和教育 AI 生态系统。 该博客可能包含模型架构、训练数据和评估方法的技术细节，但摘要中未提供具体数字。该方法可能涉及强化学习或监督学习来建模何时干预，可能利用学生的参与度和表现信号。
 
-google_news · k.sina.com.cn · 8月6日 08:40
+rss · Hugging Face Blog · 8月7日 17:53
 
-**背景**: AI 代理是通过设计工作流并利用可用工具自主执行任务的系统。近期多代理系统和代理型 AI 的发展使代理能够协作完成复杂任务，例如贷款处理，其中不同代理负责数据聚合、分析和决策。“AI 社会”的概念将此延伸为具有自身规则和经济活动的自组织代理社区。
+**背景**: AI 导师是为学习者提供个性化指导的智能系统，通常能适应个人需求。一个关键挑战是决定何时提供帮助：过多的帮助会阻碍独立解决问题，而过少则可能导致挫败感。这一概念与教育中的“脚手架”相关，即随着学习者能力的提升逐步撤除支持。自适应学习系统也旨在根据学生当前的知识水平定制教学。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="https://www.ibm.com/think/topics/ai-agents">What Are AI Agents ? | IBM</a></li>
-<li><a href="https://www.lyzr.ai/blog/ai-agents-for-loan-approval/">AI Agents for Loan Approval: Automating Credit Decisions</a></li>
-<li><a href="https://revvence.com/blog/agentic-ai-in-banking">Introduction: The Transformational Potential of Agentic AI in Banking</a></li>
+<li><a href="https://code.org/en-US/tools/ai-tutor">AI Tutor | CodeAI</a></li>
+<li><a href="https://bostreet.com/innovation-in-education/adaptive-learning-systems/">Adaptive Learning Systems - Bo Street</a></li>
+<li><a href="https://www.uopeople.edu/blog/what-is-scaffolding-in-education/">Essential Tips On What Is Scaffolding In Education</a></li>
 
 </ul>
 </details>
 
-**标签**: `#AI agents`, `#autonomous systems`, `#AI society`, `#artificial intelligence`
-
----
-
-<a id="item-9"></a>
-## [英伟达开源自动驾驶 AI 模型 Alpamayo](https://news.google.com/rss/articles/CBMickFVX3lxTE9fdnZPdmo1V3pwLTh6eVFKWWVaWElJV2Fta0VqTWM4TTd0dTF5V1pNY2VsN1VSNHhuc2pWaTNkajQ5MEtJLWhTakkzTTRNY0hPS1dpVEdsZlNTR1RaUS11TURjV05yOXN3MUJYUUE0QWpIUQ?oc=5) ⭐️ 7.0/10
-
-英伟达 CEO 黄仁勋在拉斯维加斯新闻发布会上宣布发布 Alpamayo，这是全球首个能够思考和推理的开源自动驾驶 AI 模型。该模型拥有 100 亿参数，可免费使用，旨在使自动驾驶技术民主化。 此举可能标志着自动驾驶行业的“安卓时刻”，类似于安卓系统的开源特性加速了智能手机的普及。通过免费提供强大的推理模型，英伟达可能降低开发者和制造商的门槛，从而加速自动驾驶技术的创新和竞争。 Alpamayo 是一个 100 亿参数的模型，被描述为思维链推理 VLA（视觉-语言-动作）模型。它旨在像人类驾驶员一样思考，其开源发布是英伟达在机器人和自动驾驶 AI 领域更广泛布局的一部分。
-
-google_news · OFweek · 8月6日 01:35
-
-**背景**: 自动驾驶依赖 AI 模型来感知环境并做出驾驶决策。传统上，这类模型是专有的，由个别公司开发，限制了访问。像 Alpamayo 这样的开源模型可以使更广泛的开发者能够构建和定制自动驾驶系统，类似于安卓的开放平台允许各种制造商创建智能手机。
-
-<details><summary>参考链接</summary>
-<ul>
-<li><a href="https://www.linkedin.com/posts/asteris-ai_nvidia-unveils-open-source-ai-for-autonomous-activity-7414294933949497344-70zp">Nvidia Launches Alpamayo AI for Autonomous Vehicles | LinkedIn</a></li>
-<li><a href="https://news.aibase.com/news/24311">NVIDIA Opens Source Autonomous Driving Model , Pioneering the...</a></li>
-<li><a href="https://eu.36kr.com/en/p/3926594047989381">Free Intelligent Driving Models: Jensen Huang Unveils Late-Night...</a></li>
-
-</ul>
-</details>
-
-**标签**: `#autonomous driving`, `#open source`, `#NVIDIA`, `#AI models`
+**标签**: `#AI in Education`, `#Tutoring Systems`, `#Human-AI Interaction`, `#Machine Learning`, `#EdTech`
 
 ---
